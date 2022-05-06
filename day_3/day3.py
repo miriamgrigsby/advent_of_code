@@ -4,12 +4,9 @@ import typing
 with open("input.txt", "r") as input_data:
     string_input = input_data.read()
 
-
 parsed_data: typing.List[str] = string_input.splitlines()
 
 def solve_day3_part1(parsed_data: typing.List[str]) -> int:
-    # python counter for collections
-    # power consumption = gamma * epsilon
     total_gamma = 0 
     total_epsilon = 0 
 
