@@ -1,5 +1,5 @@
 import pytest
-from typing import TypedDict, List
+from typing import TypedDict, List, Iterable
 
 
 # [[{number: 26, marked: false},  68  3 95 59], [], [], [], []]
@@ -28,6 +28,8 @@ for row in parsed_data[2:]:
     else:
         row_array = row.split(' ')
         prev_board.append([{"number": int(column), "marked": False} for column in row_array if column])
+else: 
+    bingo_boards.append(prev_board)
 
 def day4_part1_determine_bingo(bingo_board: BingoBoard) -> bool:
     for index in range(5):
@@ -100,15 +102,15 @@ def test_solve_day4_part1_mark_number(bingo_number: int, bingo_board: BingoBoard
     result = day4_part1_mark_number(bingo_number, bingo_board)
     assert result == expected_result
 
-def day4_part1_calculate_sum(bing_board: BingoBoard) -> int:
+def day4_part1_calculate_sum(bingo_board: BingoBoard) -> int:
     unmarked_total = 0
 
     for index in range(5):
         for inner_index in range(5):
-            if bing_board[index][inner_index]['marked']:
+            if bingo_board[index][inner_index]['marked']:
                 continue
             else:
-                unmarked_total += bing_board[index][inner_index]['number']
+                unmarked_total += bingo_board[index][inner_index]['number']
 
     return unmarked_total
 
@@ -123,4 +125,23 @@ def day4_part1_play_bingo(bingo_numbers: List[int], bingo_boards: List[BingoBoar
     return winning_number
 
 # Did not write tests on the last two functions because it would've been *brian: heinous*
-print(day4_part1_play_bingo(bingo_numbers, bingo_boards))
+
+# solution for part1 but it mutates the bing_boards and breaks part two if it runs here
+# print(day4_part1_play_bingo(bingo_numbers, bingo_boards))
+
+def day4_part2(bingo_numbers: List[int], bingo_boards: List[BingoBoard]) -> Iterable[int]:
+    for number in bingo_numbers:
+        pop_array = []
+        for index, board in enumerate(bingo_boards):
+            marked_board = day4_part1_mark_number(number, board)
+            is_bingo_board = day4_part1_determine_bingo(marked_board)
+            if is_bingo_board: 
+                yield day4_part1_calculate_sum(marked_board) * number
+                pop_array.append(index)
+        for i in sorted(pop_array, reverse=True):
+            bingo_boards.pop(i)
+    
+
+solved_day4_part_2 = day4_part2(bingo_numbers, bingo_boards)      
+finished = list(solved_day4_part_2)[-1]
+print(finished)
