@@ -31,110 +31,184 @@ with open("input.txt", "r") as input_data:
                 rule_map[inner_bag_tuple] = [rule_map_value]
 
     # print(":dklfjadlkfjalk;jf;lsa", rule_map)
-def solve_day7_part1(rule_key: RuleMapKey, rule_map: RuleMap, visited: Set[RuleMapKey]) -> int:
+
+
+def solve_day7_part1(
+    rule_key: RuleMapKey, rule_map: RuleMap, visited: Set[RuleMapKey]
+) -> int:
     try:
         bag_array = rule_map[rule_key]
         bag_count = 0
         for bag_adj, bag_color, count in bag_array:
             if count > 0 and (bag_adj, bag_color) not in visited:
                 visited.add((bag_adj, bag_color))
-                bag_count += solve_day7_part1((bag_adj, bag_color), rule_map, visited) + 1
-        return bag_count 
+                bag_count += (
+                    solve_day7_part1((bag_adj, bag_color), rule_map, visited) + 1
+                )
+        return bag_count
     except KeyError:
         return 0
 
-@pytest.mark.parametrize('rule_key,rule_map,count', 
+
+@pytest.mark.parametrize(
+    "rule_key,rule_map,count",
     [
-        (
-            ("", ""),
-            {},
-            0
-        ), 
+        (("", ""), {}, 0),
+        (("shiny", "gold"), {("shiny", "gold"): []}, 0),
         (
             ("shiny", "gold"),
             {
-                ("shiny", "gold"): []
+                ("shiny", "gold"): [("mirrored", "indigo", 5)],
+                (
+                    "mirrored",
+                    "indigo",
+                ): [],
             },
-            0
+            1,
         ),
         (
             ("shiny", "gold"),
             {
-                ("shiny", "gold"): [('mirrored', 'indigo', 5)],
-                ('mirrored', 'indigo',): []
+                ("shiny", "gold"): [("mirrored", "indigo", 5)],
+                (
+                    "mirrored",
+                    "indigo",
+                ): [("muted", "maroon", 1)],
+                (
+                    "muted",
+                    "maroon",
+                ): [],
             },
-            1
+            2,
         ),
         (
             ("shiny", "gold"),
             {
-                ("shiny", "gold"): [('mirrored', 'indigo', 5)],
-                ('mirrored', 'indigo',): [('muted', 'maroon', 1)],
-                ('muted', 'maroon',): []
+                ("bright", "white"): [("light", "red", 1), ("dark", "orange", 3)],
+                ("muted", "yellow"): [("light", "red", 2), ("dark", "orange", 4)],
+                ("shiny", "gold"): [("bright", "white", 1), ("muted", "yellow", 2)],
+                ("faded", "blue"): [
+                    ("muted", "yellow", 9),
+                    ("dark", "olive", 3),
+                    ("vibrant", "plum", 5),
+                ],
+                ("dark", "olive"): [("shiny", "gold", 1)],
+                ("vibrant", "plum"): [("shiny", "gold", 2)],
+                ("dotted", "black"): [("dark", "olive", 4), ("vibrant", "plum", 6)],
+                ("other", "bags"): [("faded", "blue", 0), ("dotted", "black", 0)],
             },
-            2
+            4,
         ),
-        (
-            ("shiny", "gold"),
-            {
-                ('bright', 'white'): [('light', 'red', 1), ('dark', 'orange', 3)], 
-                ('muted', 'yellow'): [('light', 'red', 2), ('dark', 'orange', 4)], 
-                ('shiny', 'gold'): [('bright', 'white', 1), ('muted', 'yellow', 2)], 
-                ('faded', 'blue'): [('muted', 'yellow', 9), ('dark', 'olive', 3), ('vibrant', 'plum', 5)], 
-                ('dark', 'olive'): [('shiny', 'gold', 1)], 
-                ('vibrant', 'plum'): [('shiny', 'gold', 2)], 
-                ('dotted', 'black'): [('dark', 'olive', 4), ('vibrant', 'plum', 6)], 
-                ('other', 'bags'): [('faded', 'blue', 0), ('dotted', 'black', 0)]
-            },
-            4
-        ), 
-        (
-            ("shiny", "gold"),
-            rule_map,
-            197
-        )
-    ]
+        (("shiny", "gold"), rule_map, 197),
+    ],
 )
-def test_solve_day7_part1(rule_key: RuleMapKey,rule_map: RuleMap, count: int):
+def test_solve_day7_part1(rule_key: RuleMapKey, rule_map: RuleMap, count: int):
     result = solve_day7_part1(rule_key, rule_map, set())
     assert result == count
 
-# Fix day7 part 2
-# def solve_day7_part2(rule_key: RuleMapKey, rule_map: RuleMap, visited: Set[RuleMapKey]) -> int:
-#     try:
-#         bag_array = rule_map[rule_key]
-#         bag_count = 0
-#         for bag_adj, bag_color, count in bag_array:
-#             if count > 0 and (bag_adj, bag_color) not in visited:
-#                 visited.add((bag_adj, bag_color))
-#                 bag_count += solve_day7_part1((bag_adj, bag_color), rule_map, visited)
-#         return bag_count 
-#     except KeyError:
-#         return 0
 
-# @pytest.mark.parametrize('rule_key,rule_map,count', 
-#     [
-#         (
-#             ("shiny", "gold"),
-#             {
-#                 ('bright', 'white'): [('light', 'red', 1), ('dark', 'orange', 3)], 
-#                 ('muted', 'yellow'): [('light', 'red', 2), ('dark', 'orange', 4)], 
-#                 ('shiny', 'gold'): [('bright', 'white', 1), ('muted', 'yellow', 2)], 
-#                 ('faded', 'blue'): [('muted', 'yellow', 9), ('dark', 'olive', 3), ('vibrant', 'plum', 5)], 
-#                 ('dark', 'olive'): [('shiny', 'gold', 1)], 
-#                 ('vibrant', 'plum'): [('shiny', 'gold', 2)], 
-#                 ('dotted', 'black'): [('dark', 'olive', 4), ('vibrant', 'plum', 6)], 
-#                 ('other', 'bags'): [('faded', 'blue', 0), ('dotted', 'black', 0)]
+def transform_puzzle(rule_map: RuleMap) -> RuleMap:
+    transformed_puzzle: RuleMap = {}
+    for key_tuple, value_array in rule_map.items():
+        for value_tuple_adj, value_tuple_color, value_tuple_count in value_array:
+            key_adj, key_color = key_tuple
+            try:
+                transformed_puzzle[(value_tuple_adj, value_tuple_color)].append(
+                    (key_adj, key_color, value_tuple_count)
+                )
+            except KeyError:
+                transformed_puzzle[(value_tuple_adj, value_tuple_color)] = [
+                    (key_adj, key_color, value_tuple_count)
+                ]
+    return transformed_puzzle
+
+
+# print(transform_puzzle(
+#      {
+#                 ("dark", "red"): [("shiny", "gold", 2)],
+#                 ("dark", "orange"): [("dark", "red", 2), ("heinous", "yellow", 1)],
+#                 ("ugly", "purple"): [("dark", "orange", 2)],
+#                 ("other", "bags"): [("ugly", "purple", 0)],
+#                 ("heinous", "yellow"): [("other", "bags", 0)],
 #             },
-#             32
-#         ),
-#         # (
-#         #     ("shiny", "gold"),
-#         #     rule_map,
-#         #     197
-#         # )
-#     ]
 # )
-# def test_solve_day7_part2(rule_key: RuleMapKey,rule_map: RuleMap, count: int):
-#     result = solve_day7_part2(rule_key, rule_map, set())
-#     assert result == count
+# )
+
+# {
+#     ("shiny", "gold"): [("dark", "red", 2)],
+#     ("dark", "red"): [("dark", "orange", 2)],
+#     ("heinous", "yellow"): [("dark", "orange", 1)],
+#     ("dark", "orange"): [("ugly", "purple", 2)],
+#     ("ugly", "purple"): [("other", "bags", 0)],
+#     ("other", "bags"): [("heinous", "yellow", 0)],
+# }
+
+
+@pytest.mark.parametrize(
+    "old_rule_map,expected_rule_map",
+    [
+        (
+            {
+                ("dark", "red"): [("shiny", "gold", 2)],
+                ("dark", "orange"): [("dark", "red", 2)],
+                ("dark", "yellow"): [("dark", "orange", 2)],
+                ("dark", "green"): [("dark", "yellow", 2)],
+                ("dark", "blue"): [("dark", "green", 2)],
+                ("dark", "violet"): [("dark", "blue", 2)],
+                ("other", "bags"): [("dark", "violet", 0)],
+            },
+            {
+                ("shiny", "gold"): [("dark", "red", 2)],
+                ("dark", "red"): [("dark", "orange", 2)],
+                ("dark", "orange"): [("dark", "yellow", 2)],
+                ("dark", "yellow"): [("dark", "green", 2)],
+                ("dark", "green"): [("dark", "blue", 2)],
+                ("dark", "blue"): [("dark", "violet", 2)],
+                ("dark", "violet"): [("other", "bags", 0)],
+            },
+        )
+    ],
+)
+def test_solve_transform_puzzle(old_rule_map: RuleMap, expected_rule_map: RuleMap):
+    result = transform_puzzle(old_rule_map)
+    assert result == expected_rule_map
+
+
+def solve_day7_part2(
+    rule_key: RuleMapKey, rule_map: RuleMap
+) -> int:
+    try:
+        bag_array = rule_map[rule_key]
+        bag_count = 0
+        for bag_adj, bag_color, count in bag_array:
+            if count > 0:
+                bag_count += (
+                    solve_day7_part2((bag_adj, bag_color), rule_map) + 1
+                ) * count
+        return bag_count
+    except KeyError:
+        return 0
+
+
+@pytest.mark.parametrize(
+    "rule_key,rule_map,count",
+    [
+        (
+            ("shiny", "gold"),
+            {
+                ("dark", "red"): [("shiny", "gold", 2)],
+                ("dark", "orange"): [("dark", "red", 2)],
+                ("dark", "yellow"): [("dark", "orange", 2)],
+                ("dark", "green"): [("dark", "yellow", 2)],
+                ("dark", "blue"): [("dark", "green", 2)],
+                ("dark", "violet"): [("dark", "blue", 2)],
+                ("other", "bags"): [("dark", "violet", 0)],
+            },
+            126,
+        ),
+        (("shiny", "gold"), rule_map, 85324),
+    ],
+)
+def test_solve_day7_part2(rule_key: RuleMapKey, rule_map: RuleMap, count: int):
+    result = solve_day7_part2(rule_key, transform_puzzle(rule_map))
+    assert result == count
