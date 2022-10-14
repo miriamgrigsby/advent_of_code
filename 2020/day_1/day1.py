@@ -51,8 +51,7 @@ def solve_day1_part2(parsed_data) -> int:
                 if first_num + second_num + current_num == 2020:
                     return first_num * second_num * current_num 
     return 0
-
-@pytest.mark.only()
+    
 @pytest.mark.parametrize('parsed_data,expected_result', [
     ([], 0),
     ([19], 0),
