@@ -19,8 +19,6 @@ with open("input.txt", "r") as input_data:
         command, amount = line.split(" ")
         instructions_array.append((InstructionEnum(command), int(amount), index))
     
-# print([(enu.value, amount, index )for enu, amount, index in instructions_array])
-
 def solve_day8_part1(instruction_array: Instructions, visited: set, start_position: int) -> int:
    for instruction_enum, instruction_count, instruction_index in instruction_array[start_position:]:
         if instruction_index not in visited:
