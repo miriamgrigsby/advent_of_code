@@ -1,6 +1,6 @@
-from pickle import TUPLE
 import pytest
 from typing import List, Literal, Dict, Tuple
+import sys
 
 Position = Tuple[int, int]
 Seat = Literal['.', '#', 'L']
@@ -270,6 +270,7 @@ def determines_type_of_seat_part_2(current_position: Position, seats: Seats) -> 
                 break
             elif seats[(x, current_position[1])] == 'L':
                 sees_open_seat = True
+                break
         except KeyError:
             pass
     for y in range(current_position[1] + 1, max_y + 1): #right
@@ -279,6 +280,7 @@ def determines_type_of_seat_part_2(current_position: Position, seats: Seats) -> 
                 break
             elif seats[(current_position[0], y)] == 'L':
                 sees_open_seat = True
+                break
         except KeyError:
             pass
     for x in range(current_position[0] -1, -1, -1): #up
@@ -288,6 +290,7 @@ def determines_type_of_seat_part_2(current_position: Position, seats: Seats) -> 
                 break
             elif seats[(x, current_position[1])] ==  'L':
                 sees_open_seat = True
+                break
         except KeyError:
             pass
     for y in range(current_position[1] - 1, -1, -1): #left
@@ -297,6 +300,7 @@ def determines_type_of_seat_part_2(current_position: Position, seats: Seats) -> 
                 break
             elif seats[(current_position[0], y)] ==  'L':
                 sees_open_seat = True
+                break
         except KeyError:
             pass
     for index, x in enumerate(range(current_position[0] -1, -1, -1)): #up right
@@ -307,6 +311,7 @@ def determines_type_of_seat_part_2(current_position: Position, seats: Seats) -> 
                 break
             elif seats[(x, y)] ==  'L':
                 sees_open_seat = True
+                break
         except KeyError:
             pass
     for index, x in enumerate(range(current_position[0] - 1, -1, -1)): #up left
@@ -317,6 +322,7 @@ def determines_type_of_seat_part_2(current_position: Position, seats: Seats) -> 
                 break
             elif seats[(x, y)] ==  'L':
                 sees_open_seat = True
+                break
         except KeyError:
             pass
     for index, x in enumerate(range(current_position[0] + 1 , max_x + 1)): #down right
@@ -327,6 +333,7 @@ def determines_type_of_seat_part_2(current_position: Position, seats: Seats) -> 
                 break
             elif seats[(x, y)] ==  'L':
                 sees_open_seat = True
+                break
         except KeyError:
             pass
     for index, x in enumerate(range(current_position[0] +  1, max_x + 1)): #down left
@@ -337,10 +344,11 @@ def determines_type_of_seat_part_2(current_position: Position, seats: Seats) -> 
                 break
             elif seats[(x, y)] ==  'L':
                 sees_open_seat = True
+                break
         except KeyError:
             pass
 
-    if seats[current_position] == 'L' and sees_open_seat:
+    if seats[current_position] == 'L' and sees_open_seat and occupied_adjacent_seats == 0:
         return '#'
 
     if seats[current_position] == '#' and occupied_adjacent_seats >= 5:
@@ -422,6 +430,22 @@ def determines_type_of_seat_part_2(current_position: Position, seats: Seats) -> 
 #.#####.##"""
             ),
             "L"
+        ),
+        (
+            (9,8),
+            parse_data(
+"""#.LL.LL.L#
+#LLLLLL.LL
+L.L.L..L..
+LLLL.LL.LL
+L.LL.LL.LL
+L.LLLLL.LL
+..L.L.....
+LLLLLLLLL#
+#.LLLLLL.L
+#.LLLLL.L#"""
+            ),
+            "L"
         )
        
     ]
@@ -490,6 +514,32 @@ LLLLLLLLL#
 #.LLLLLL.L
 #.LLLLL.L#"""
             ),
+        ),
+        (
+            parse_data(
+"""#.LL.LL.L#
+#LLLLLL.LL
+L.L.L..L..
+LLLL.LL.LL
+L.LL.LL.LL
+L.LLLLL.LL
+..L.L.....
+LLLLLLLLL#
+#.LLLLLL.L
+#.LLLLL.L#"""
+            ),
+            parse_data(
+"""#.L#.##.L#
+#L#####.LL
+L.#.#..#..
+##L#.##.##
+#.##.#L.##
+#.#####.#L
+..#.#.....
+LLL####LL#
+#.L#####.L
+#.L####.L#"""
+            )
         )
     ]
 )
@@ -497,39 +547,49 @@ def test_calculate_entire_seat_grid_part2(seats: Seats, expected_result: Seat):
     result = calculate_entire_seat_grid_part_2(seats)
     assert result == expected_result
 
-# def solve_day11_part2(seats:Seats) -> int:
-#     previous = calculate_entire_seat_grid_part_2(seats)
-#     while True:
-#         current = calculate_entire_seat_grid_part_2(previous)
-#         if previous != current:
-#             previous = current
-#         else:
-#             break
-#     return len([seat for seat in previous.values() if seat == '#'])
-# @pytest.mark.only
-# @pytest.mark.parametrize(
-#     "seats,expected_result", [
-        
-#         (
-#             parse_data(
-# """L.LL.LL.LL
-# LLLLLLL.LL
-# L.L.L..L..
-# LLLL.LL.LL
-# L.LL.LL.LL
-# L.LLLLL.LL
-# ..L.L.....
-# LLLLLLLLLL
-# L.LLLLLL.L
-# L.LLLLL.LL"""
-#             ), 
-#             26
-#         ),
-#         # (
-#         #    parsed_data, 2483 
-#         # )
-#     ]
-# )
-# def test_solve_day11_part2(seats: Seats, expected_result):
-#     result = solve_day11_part2(seats)
-#     assert result == expected_result
+# useful utility function to test iterations of the board 
+def print_calcs(new_seats):
+    print()
+    for x in range(0,98):
+        for y in range (0,98):
+            sys.stdout.write(new_seats[(x,y)])
+        print()
+    print()
+
+def solve_day11_part2(seats:Seats) -> int:
+    calculations: List[Seats] = []
+    calculations.append(seats)
+    counter = 1
+    while True:
+        calculation = calculate_entire_seat_grid_part_2(calculations[-1])
+        if calculations[counter - 2] == calculation:
+            break
+        calculations.append(calculation)
+        counter += 1
+    return len([seat for seat in calculations[-2].values() if seat == '#'])
+
+@pytest.mark.parametrize(
+    "seats,expected_result", [
+        (
+            parse_data(
+"""L.LL.LL.LL
+LLLLLLL.LL
+L.L.L..L..
+LLLL.LL.LL
+L.LL.LL.LL
+L.LLLLL.LL
+..L.L.....
+LLLLLLLLLL
+L.LLLLLL.L
+L.LLLLL.LL"""
+            ), 
+            26
+        ),
+        (
+           parsed_data, 2285
+        )
+    ]
+)
+def test_solve_day11_part2(seats: Seats, expected_result):
+    result = solve_day11_part2(seats)
+    assert result == expected_result
