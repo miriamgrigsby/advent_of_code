@@ -22,16 +22,12 @@ with open("input.txt", "r") as input_data:
             try:
                 inner_bag_count = int(count)
             except ValueError:
-                # print("screech")
                 inner_bag_count = 0
             rule_map_value: RuleMapValue = (*outer_bag_tuple, inner_bag_count)
             try:
                 rule_map[inner_bag_tuple].append(rule_map_value)
             except KeyError:
                 rule_map[inner_bag_tuple] = [rule_map_value]
-
-    # print(":dklfjadlkfjalk;jf;lsa", rule_map)
-
 
 def solve_day7_part1(
     rule_key: RuleMapKey, rule_map: RuleMap, visited: Set[RuleMapKey]
@@ -121,28 +117,6 @@ def transform_puzzle(rule_map: RuleMap) -> RuleMap:
                     (key_adj, key_color, value_tuple_count)
                 ]
     return transformed_puzzle
-
-
-# print(transform_puzzle(
-#      {
-#                 ("dark", "red"): [("shiny", "gold", 2)],
-#                 ("dark", "orange"): [("dark", "red", 2), ("heinous", "yellow", 1)],
-#                 ("ugly", "purple"): [("dark", "orange", 2)],
-#                 ("other", "bags"): [("ugly", "purple", 0)],
-#                 ("heinous", "yellow"): [("other", "bags", 0)],
-#             },
-# )
-# )
-
-# {
-#     ("shiny", "gold"): [("dark", "red", 2)],
-#     ("dark", "red"): [("dark", "orange", 2)],
-#     ("heinous", "yellow"): [("dark", "orange", 1)],
-#     ("dark", "orange"): [("ugly", "purple", 2)],
-#     ("ugly", "purple"): [("other", "bags", 0)],
-#     ("other", "bags"): [("heinous", "yellow", 0)],
-# }
-
 
 @pytest.mark.parametrize(
     "old_rule_map,expected_rule_map",

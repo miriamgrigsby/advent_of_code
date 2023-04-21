@@ -12,7 +12,6 @@ class BusInfo:
 
 def parse_data(string_input: str) -> BusInfo:
     earliest_departure, bus_ids = string_input.splitlines()
-    print(len(bus_ids.split(',')))
     filtered_bus_ids = [int(id) for id in bus_ids.split(',') if id != 'x']
     
     return BusInfo(earliest_departure=int(earliest_departure), bus_ids=filtered_bus_ids)
