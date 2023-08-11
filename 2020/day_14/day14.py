@@ -103,3 +103,5 @@ def solve_day14_part1(instructions: Instructions) -> int:
 def test_solve_day14_part1(instructions: Instructions, expected_result: int):
     result = solve_day14_part1(instructions)
     assert result == expected_result
+
+    # SKIPPED PART 2 FOR NOW
